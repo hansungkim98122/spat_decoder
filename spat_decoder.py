@@ -23,7 +23,6 @@ spat = asn1tools.compile_files(filenames,'uper')
 
 def spat_decoder(data):
     '''
-    dir: directory of the extracted files in str
     data: payload to decode(byte object)
     '''
 
