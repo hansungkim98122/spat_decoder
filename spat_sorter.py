@@ -43,6 +43,7 @@ for i, folder_dir in enumerate(tqdm(folder_list)):
                 
                 data = pickle.load(f,encoding='bytes')
                 decoded = spat_decoder(data)
+                print(decoded)
                 parsed_data = parse_spat(decoded)
 
                 #The raw data is already sorted chronologically

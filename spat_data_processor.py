@@ -1,7 +1,6 @@
 from cmath import nan
 import pandas as pd
 import pickle
-from time import time
 import os
 from tqdm import tqdm
 
@@ -45,9 +44,10 @@ def parse_spat(dict):
     #Minute of the Year and timeStamp
     parsed_data.moy = raw_data['moy']
     parsed_data.timeStamp = raw_data['timeStamp']
-
+    flag = False
     #States
     for state in raw_data['states']: 
+        
         temp = State()
         temp.signalGroup = state['signalGroup']
         parsed_data.num_signals = len(raw_data['states'])
@@ -65,10 +65,15 @@ def parse_spat(dict):
             temp.state_time_speed.timing.maxEndTime = curr_state_time_speed['timing']['maxEndTime']
             if 'likelyTime' in curr_state_time_speed['timing']:
                 temp.state_time_speed.timing.likelyTime = curr_state_time_speed['timing']['likelyTime']
+                flag = True
             if 'confidence' in curr_state_time_speed['timing']:
                 temp.state_time_speed.timing.confidence = curr_state_time_speed['timing']['confidence']
+                flag = True
             if 'nextTime' in curr_state_time_speed['timing']:
                 temp.state_time_speed.timing.nextTime = curr_state_time_speed['timing']['nextTime']
+                flag = True
+            if flag:
+                print('ERROR: Check \'timing\' length')
             
             parsed_data.states.append(temp)
     
@@ -119,7 +124,7 @@ for i, folder_dir in enumerate(tqdm(folder_list)):
             try:
                 run_once = 0
                 while True:
-                    export_data = {'ID': [], 'Month': [], 'Day': [], 'Hour': [], 'Minute': [], 'Second': [], 'signalGroup': [], 'eventState': [], 'speeds': []}
+                    export_data = {'ID': [], 'timeStamp': [],'Month': [], 'Day': [], 'Hour': [], 'Minute': [], 'Second': [], 'signalGroup': [], 'eventState': [], 'speeds': [], 'startTime':[],'minEndTime':[],'maxEndTime':[]}
                     decoded_data = pickle.load(f)
                     parsed_data = parse_spat(decoded_data)
                     # print(decoded_data)
@@ -128,10 +133,14 @@ for i, folder_dir in enumerate(tqdm(folder_list)):
                     # export_data['Month'].append(month); export_data['Day'].append(day); export_data['Hour'].append(hour); export_data['Minute'].append(minute); export_data['Second'].append(second)
                     for state in parsed_data.states:
                         export_data['ID'].append(parsed_data.id)
+                        export_data['timeStamp'].append(parsed_data.timeStamp)
                         export_data['Month'].append(month); export_data['Day'].append(day); export_data['Hour'].append(hour); export_data['Minute'].append(minute); export_data['Second'].append(second)
                         export_data['signalGroup'].append(state.signalGroup)
                         export_data['eventState'].append(state.state_time_speed.eventState)
                         export_data['speeds'].append(state.state_time_speed.speeds)
+                        export_data['startTime'].append(state.state_time_speed.timing.startTime)
+                        export_data['minEndTime'].append(state.state_time_speed.timing.minEndTime)
+                        export_data['maxEndTime'].append(state.state_time_speed.timing.maxEndTime)
 
                     df = pd.DataFrame.from_dict(export_data)    
                     if run_once == 0:

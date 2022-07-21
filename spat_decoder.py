@@ -10,7 +10,7 @@ Before using this decoder, complete the following steps:
 1) Download the .zip file from https://www.sae.org/standards/content/j2735asn_202007/
 2) Extract the contents into a folder
 '''
-dir = '/home/hansung/Research/spat/test/SAE-J2735-2020/' # Enter the folder directory that contain the extracted files(.asn)
+dir =  '/home/hansung/spat_data/SAE-J2735-2020/' # Enter the folder directory that contain the extracted files(.asn)
 
 #Compiling ASN FILES
 
